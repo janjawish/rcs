@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RCS — Flipbook</title>
+
+  <style>
+    :root{
+      --bg:#000;
+      --gold:#c7a44a;
+      --page-bg:#0b0f14;
+      --radius:14px;
+      --bookW:min(92vw, 1050px);
+      --bookH:calc(var(--bookW) * 0.62); /* 2 pages côte à côte */
+      --pad:14px;
+      --dur: 900ms;
+      --ease: cubic-bezier(.2,.85,.25,1);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(1200px 700px at 50% 12%, #121826 0%, #070a10 55%, #000 100%);
+      color:#fff;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    }
+    .wrap{width:var(--bookW); padding:18px 14px; display:flex; flex-direction:column; gap:14px;}
+    .toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+    .btn{
+      appearance:none;
+      border:1px solid rgba(199,164,74,.5);
+      background: rgba(0,0,0,.35);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:999px;
+      cursor:pointer;
+      backdrop-filter: blur(10px);
+      transition: transform .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px); border-color: rgba(199,164,74,.95);}
+    .btn:disabled{opacity:.45; cursor:not-allowed; transform:none;}
+    .counter{font-size:14px; opacity:.9}
+    .counter b{color:var(--gold)}
+    .stage{width:var(--bookW); height:var(--bookH); perspective:2200px;}
+    .book{
+      width:100%; height:100%;
+      position:relative;
+      border-radius: var(--radius);
+      background:
+        linear-gradient(90deg, rgba(199,164,74,.09) 0%, rgba(199,164,74,.02) 7%, rgba(0,0,0,0) 50%, rgba(199,164,74,.02) 93%, rgba(199,164,74,.09) 100%),
+        radial-gradient(700px 260px at 50% 20%, rgba(255,255,255,.05), rgba(255,255,255,0) 75%),
+        rgba(255,255,255,.02);
+      box-shadow: 0 28px 80px rgba(0,0,0,.6), inset 0 0 0 1px rgba(199,164,74,.12);
+      overflow:hidden;
+    }
+    .spine{
+      position:absolute; top:0; bottom:0; left:50%;
+      width:2px;
+      background: linear-gradient(to bottom, rgba(199,164,74,.08), rgba(199,164,74,.55), rgba(199,164,74,.08));
+      transform:translateX(-1px);
+      opacity:.65;
+      pointer-events:none;
+    }
+
+    /* Pages visibles (gauche + droite) */
+    .spread{
+      position:absolute; inset:var(--pad);
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:0;
+      border-radius: calc(var(--radius) - 6px);
+      overflow:hidden;
+      box-shadow: inset 0 0 0 1px rgba(199,164,74,.10);
+      background: var(--page-bg);
+    }
+    .pane{
+      position:relative;
+      overflow:hidden;
+      background: var(--page-bg);
+    }
+    .pane::after{
+      content:"";
+      position:absolute; inset:0;
+      box-shadow: inset 0 0 0 1px rgba(199,164,74,.16), inset 0 0 60px rgba(0,0,0,.35);
+      pointer-events:none;
+    }
+    .pane img{
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    /* léger vignettage */
+    .pane::before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(80% 70% at 50% 40%, rgba(0,0,0,0) 35%, rgba(0,0,0,.22) 100%);
+      pointer-events:none;
+      mix-blend-mode:multiply;
+      opacity:.9;
+    }
+
+    /* Page qui tourne (overlay) */
+    .flip{
+      position:absolute;
+      top:var(--pad);
+      bottom:var(--pad);
+      width: calc((100% - (2*var(--pad))) / 2);
+      right: var(--pad);
+      transform-style:preserve-3d;
+      transform-origin: left center;
+      z-index:50;
+      display:none;
+    }
+    .flip.active{ display:block; }
+
+    .flip .face{
+      position:absolute; inset:0;
+      backface-visibility:hidden;
+      overflow:hidden;
+      background: var(--page-bg);
+    }
+    .flip .face::after{
+      content:"";
+      position:absolute; inset:0;
+      box-shadow: inset 0 0 0 1px rgba(199,164,74,.18);
+      pointer-events:none;
+    }
+    .flip .face img{
+      width:100%; height:100%; object-fit: cover; display:block;
+    }
+
+    /* Ombre dynamique */
+    .flip .shadow{
+      position:absolute; inset:0;
+      pointer-events:none;
+      background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,0));
+      opacity:0;
+      transition: opacity var(--dur) var(--ease);
+    }
+    .flip.forward .shadow{ opacity:.55; }
+
+    /* Back face */
+    .flip .back{ transform: rotateY(180deg); }
+
+    /* Animation forward */
+    .flip.forward{
+      right: var(--pad);
+      left: auto;
+      transform-origin: left center;
+      animation: flipForward var(--dur) var(--ease) forwards;
+    }
+    @keyframes flipForward{
+      0%{ transform: rotateY(0deg) translateZ(0); }
+      35%{ transform: rotateY(-70deg) translateZ(0); }
+      100%{ transform: rotateY(-180deg) translateZ(0); }
+    }
+
+    /* Animation backward (on tourne une page vers l'arrière) */
+    .flip.backward{
+      left: var(--pad);
+      right:auto;
+      transform-origin: right center;
+      animation: flipBackward var(--dur) var(--ease) forwards;
+    }
+    @keyframes flipBackward{
+      0%{ transform: rotateY(180deg) translateZ(0); }
+      35%{ transform: rotateY(110deg) translateZ(0); }
+      100%{ transform: rotateY(0deg) translateZ(0); }
+    }
+
+    .hint{font-size:12px; opacity:.75; text-align:center; line-height:1.35;}
+
+    /* Mobile: 1 page (droite) */
+    @media (max-width: 760px){
+      :root{
+        --bookW:min(94vw, 560px);
+        --bookH:calc(var(--bookW) * 1.35); /* proche A4 */
+      }
+      .spine{display:none;}
+      .spread{grid-template-columns: 1fr;}
+      .pane.left{display:none;}
+      .flip{
+        width: calc(100% - (2*var(--pad)));
+        right: var(--pad);
+        left: var(--pad);
+      }
+      .flip.forward, .flip.backward{
+        left: var(--pad);
+        right: var(--pad);
+        transform-origin: center center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .flip.forward, .flip.backward{ animation:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="toolbar">
+      <button class="btn" id="prevBtn">← Précédent</button>
+      <div class="counter" id="counter">Page <b>1</b> / 6</div>
+      <button class="btn" id="nextBtn">Suivant →</button>
+    </div>
+
+    <div class="stage">
+      <div class="book" id="book">
+        <div class="spine"></div>
+
+        <div class="spread" id="spread">
+          <div class="pane left"  id="leftPane"></div>
+          <div class="pane right" id="rightPane"></div>
+        </div>
+
+        <!-- overlay flip -->
+        <div class="flip" id="flip">
+          <div class="face front" id="flipFront"></div>
+          <div class="face back"  id="flipBack"></div>
+          <div class="shadow"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint">
+      Flèches clavier ← → ou clic gauche/droite sur le livre.
+    </div>
+  </div>
+
+  <script>
+    // ✅ Mets tes 6 images ici (ordre exact)
+    const pages = [
+      "images/page1.png",
+      "images/page2.png",
+      "images/page3.png",
+      "images/page4.png",
+      "images/page5.png",
+      "images/page6.png",
+    ];
+    const totalPages = pages.length; // 6
+
+    // spreads: (vide|1), (2|3), (4|5), (6|vide) => 4 spreads
+    const totalSpreads = Math.ceil((totalPages + 1) / 2); // (6+1)/2=3.5 => 4
+
+    const leftPane  = document.getElementById("leftPane");
+    const rightPane = document.getElementById("rightPane");
+    const flip      = document.getElementById("flip");
+    const flipFront = document.getElementById("flipFront");
+    const flipBack  = document.getElementById("flipBack");
+
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const counter = document.getElementById("counter");
+
+    let spreadIndex = 0; // 0..3
+    let animating = false;
+
+    function imgTag(src, alt="page"){
+      const img = new Image();
+      img.alt = alt;
+      img.src = src;
+      img.loading = "eager";
+      return img;
+    }
+
+    function setPane(pane, srcOrNull){
+      pane.innerHTML = "";
+      if(!srcOrNull){
+        // page vide (fond noir)
+        return;
+      }
+      pane.appendChild(imgTag(srcOrNull));
+    }
+
+    function getSpreadPages(si){
+      // si=0 => left null, right page1 (index0)
+      // si=1 => left page2 (index1), right page3 (index2)
+      // si=2 => left page4 (index3), right page5 (index4)
+      // si=3 => left page6 (index5), right null
+      if(si === 0) return { left:null, right: pages[0], leftIdx:null, rightIdx:0 };
+      const leftIdx = 2*si - 1;     // 1,3,5
+      const rightIdx = 2*si;        // 2,4,6 -> (index) 2,4,6
+      return {
+        left:  pages[leftIdx]  || null,
+        right: pages[rightIdx] || null,
+        leftIdx:  leftIdx < totalPages ? leftIdx : null,
+        rightIdx: rightIdx < totalPages ? rightIdx : null
+      };
+    }
+
+    function updateCounter(){
+      // On affiche “page de droite” si existe sinon “page de gauche”
+      const sp = getSpreadPages(spreadIndex);
+      let current = 1;
+      if(sp.rightIdx !== null) current = sp.rightIdx + 1;
+      else if(sp.leftIdx !== null) current = sp.leftIdx + 1;
+      counter.innerHTML = `Page <b>${current}</b> / ${totalPages}`;
+      prevBtn.disabled = spreadIndex === 0 || animating;
+      nextBtn.disabled = spreadIndex === totalSpreads - 1 || animating;
+    }
+
+    function renderSpread(){
+      const sp = getSpreadPages(spreadIndex);
+      setPane(leftPane, sp.left);
+      setPane(rightPane, sp.right);
+      updateCounter();
+    }
+
+    function setFlipFaces(frontSrc, backSrc){
+      flipFront.innerHTML = "";
+      flipBack.innerHTML = "";
+      if(frontSrc) flipFront.appendChild(imgTag(frontSrc, "face avant"));
+      if(backSrc)  flipBack.appendChild(imgTag(backSrc,  "face arrière"));
+    }
+
+    function next(){
+      if(animating) return;
+      if(spreadIndex >= totalSpreads - 1) return;
+
+      animating = true;
+
+      const cur = getSpreadPages(spreadIndex);
+      const nxt = getSpreadPages(spreadIndex + 1);
+
+      // Sous la page qui tourne, on prépare la prochaine page de droite
+      setPane(rightPane, nxt.right);
+      // La page qui tourne : avant = actuelle droite ; arrière = prochaine gauche
+      setFlipFaces(cur.right, nxt.left);
+
+      flip.className = "flip active forward";
+
+      flip.addEventListener("animationend", function handler(){
+        flip.removeEventListener("animationend", handler);
+        flip.className = "flip"; // reset
+        spreadIndex++;
+        renderSpread();
+        animating = false;
+      }, { once:true });
+    }
+
+    function prev(){
+      if(animating) return;
+      if(spreadIndex <= 0) return;
+
+      animating = true;
+
+      const cur = getSpreadPages(spreadIndex);
+      const prv = getSpreadPages(spreadIndex - 1);
+
+      // Sous la page qui tourne, on prépare la précédente page de gauche
+      setPane(leftPane, prv.left);
+      // Page qui tourne vers l'arrière : on retourne la page gauche actuelle
+      // avant (visible au début) = page précédente droite (prv.right) sur la face arrière
+      // arrière (visible quand fini) = page gauche actuelle (cur.left)
+      // Pour l’animation backward, on démarre à 180deg donc la face visible est "back".
+      // => back doit montrer cur.left, front doit montrer prv.right.
+      setFlipFaces(prv.right, cur.left);
+
+      flip.className = "flip active backward";
+
+      flip.addEventListener("animationend", function handler(){
+        flip.removeEventListener("animationend", handler);
+        flip.className = "flip";
+        spreadIndex--;
+        renderSpread();
+        animating = false;
+      }, { once:true });
+    }
+
+    // Click zones (gauche = prev, droite = next)
+    document.getElementById("book").addEventListener("click", (e)=>{
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      if(x > rect.width * 0.55) next();
+      else if(x < rect.width * 0.45) prev();
+    });
+
+    // Buttons & keyboard
+    nextBtn.addEventListener("click", next);
+    prevBtn.addEventListener("click", prev);
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "ArrowRight") next();
+      if(e.key === "ArrowLeft") prev();
+    });
+
+    // Preload
+    pages.forEach(src => { const i = new Image(); i.src = src; });
+
+    // Initial render
+    renderSpread();
+  </script>
+</body>
+</html>
