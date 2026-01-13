@@ -1,754 +1,371 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>RCS Groupe Étude – Bureau d'études</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="RCS Groupe Étude – Bureau d'études spécialisé en ingénierie et études de structures.">
-  <style>
-    :root {
-      --bg: #04070f;
-      --bg-alt: #0b1020;
-      --gold: #c79b4a;
-      --gold-soft: #e2c185;
-      --text: #f4f4f4;
-      --muted: #a0a3b5;
-      --accent: #e5b163;
-      --radius: 18px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #141b33 0, #04070f 55%);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    header {
-      border-bottom: 1px solid rgba(199,155,74,0.25);
-      backdrop-filter: blur(12px);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: radial-gradient(circle at top, rgba(20,27,51,0.95), rgba(4,7,15,0.95));
-    }
-
-    .container {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem;
-    }
-
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1.5rem;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .brand-logo {
-      width: 52px;
-      height: 52px;
-      border-radius: 999px;
-      border: 1px solid rgba(199,155,74,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 30% 0, rgba(199,155,74,0.15), transparent 60%);
-      overflow: hidden;
-    }
-
-    .brand-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-    }
-
-    .brand-text strong {
-      letter-spacing: 0.12em;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      color: var(--gold);
-    }
-
-    .brand-text span {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    nav ul {
-      display: flex;
-      list-style: none;
-      gap: 1.25rem;
-      font-size: 0.9rem;
-    }
-
-    nav a {
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.75rem;
-    }
-
-    nav a:hover {
-      color: var(--gold-soft);
-    }
-
-    main {
-      padding-bottom: 4rem;
-    }
-
-    /* Hero */
-    .hero {
-      padding: 3.5rem 1.25rem 2.5rem;
-    }
-
-    .hero-inner {
-      max-width: 1080px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.4fr);
-      gap: 3rem;
-      align-items: center;
-    }
-
-    .hero-title {
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(2.2rem, 3vw, 2.8rem);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1rem;
-    }
-
-    .hero-subtitle {
-      font-size: 1rem;
-      color: var(--gold-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      margin-bottom: 1.15rem;
-    }
-
-    .hero-text {
-      color: var(--muted);
-      max-width: 36rem;
-      font-size: 0.98rem;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 1.75rem;
-      padding: 0.5rem 0.9rem;
-      border-radius: 999px;
-      border: 1px solid rgba(199,155,74,0.45);
-      background: linear-gradient(90deg, rgba(199,155,74,0.15), transparent);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--gold-soft);
-    }
-
-    .hero-badge-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 12px rgba(229,177,99,0.8);
-    }
-
-    .hero-card {
-      background: radial-gradient(circle at top, #111827, #020617);
-      border-radius: 28px;
-      border: 1px solid rgba(148,163,184,0.35);
-      padding: 1.75rem 1.6rem;
-      box-shadow: 0 26px 60px rgba(15,23,42,0.9);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-card::before {
-      content: "";
-      position: absolute;
-      inset: -40%;
-      background: radial-gradient(circle at 20% 0, rgba(199,155,74,0.22), transparent 55%);
-      opacity: 0.7;
-      pointer-events: none;
-    }
-
-    .hero-card-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-card-title {
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-bottom: 1.2rem;
-    }
-
-    .hero-card-main {
-      font-size: 1rem;
-      color: #e5e7eb;
-      margin-bottom: 0.5rem;
-    }
-
-    .hero-card-main strong {
-      color: var(--gold-soft);
-    }
-
-    .hero-card-line {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-
-    .hero-card-footer {
-      margin-top: 1.2rem;
-      padding-top: 0.8rem;
-      border-top: 1px dashed rgba(148,163,184,0.5);
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .hero-card-footer span {
-      color: var(--gold-soft);
-    }
-
-    /* Sections */
-    section {
-      padding: 0 1.25rem 3rem;
-    }
-
-    section .section-inner {
-      max-width: 1080px;
-      margin: 0 auto;
-    }
-
-    .section-title {
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.6rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.4rem;
-    }
-
-    .section-subtitle {
-      font-size: 0.86rem;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--muted);
-      margin-bottom: 1.75rem;
-    }
-
-    /* À propos */
-    .about-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
-      gap: 2.5rem;
-    }
-
-    .about-text {
-      font-size: 0.96rem;
-      color: var(--muted);
-    }
-
-    .about-list {
-      margin-top: 1.25rem;
-      display: grid;
-      gap: 0.35rem;
-    }
-
-    .about-list li {
-      list-style: none;
-      font-size: 0.9rem;
-    }
-
-    .about-list li::before {
-      content: "•";
-      color: var(--gold-soft);
-      margin-right: 0.45rem;
-    }
-
-    .about-card {
-      border-radius: var(--radius);
-      border: 1px solid rgba(51,65,85,0.7);
-      background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.6));
-      padding: 1.2rem 1.35rem;
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .about-card strong {
-      color: var(--gold-soft);
-    }
-
-    /* Références */
-    .refs-grid {
-      display: grid;
-      gap: 1.75rem;
-    }
-
-    .ref-item {
-      border-radius: 24px;
-      border: 1px solid rgba(51,65,85,0.85);
-      background: radial-gradient(circle at top left, rgba(199,155,74,0.06), rgba(15,23,42,0.95));
-      padding: 1.6rem 1.5rem 1.4rem;
-      display: grid;
-      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.5fr);
-      gap: 1.75rem;
-      align-items: flex-start;
-    }
-
-    .ref-header {
-      margin-bottom: 0.5rem;
-    }
-
-    .ref-title {
-      font-size: 1.1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--gold-soft);
-      margin-bottom: 0.2rem;
-    }
-
-    .ref-meta {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--muted);
-    }
-
-    .ref-body p {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 0.6rem;
-    }
-
-    .ref-body p strong {
-      color: #e5e7eb;
-    }
-
-    .ref-result {
-      border-left: 2px solid rgba(199,155,74,0.45);
-      padding-left: 0.8rem;
-      margin-top: 0.5rem;
-      font-size: 0.88rem;
-      color: var(--gold-soft);
-    }
-
-    .ref-link {
-      margin-top: 0.75rem;
-      font-size: 0.85rem;
-    }
-
-    .ref-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      margin-top: 0.9rem;
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      border: 1px solid rgba(199,155,74,0.45);
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold-soft);
-    }
-
-    .ref-visual {
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid rgba(51,65,85,0.9);
-      background: radial-gradient(circle at top left, rgba(148,163,184,0.4), rgba(15,23,42,0.95));
-      display: flex;
-      flex-direction: column;
-    }
-
-    .ref-visual-img {
-      min-height: 150px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      /* Remplace l'URL ci-dessous par ta capture d’écran */
-      background-image: url("mario-nikis-batiment.jpg");
-    }
-
-    .ref-visual-caption {
-      padding: 0.7rem 0.9rem;
-      font-size: 0.78rem;
-      color: var(--muted);
-      border-top: 1px solid rgba(30,64,175,0.4);
-      background: radial-gradient(circle at bottom, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
-    }
-
-    .ref-visual-caption span {
-      color: var(--gold-soft);
-    }
-
-    /* Contact */
-    .contact-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr);
-      gap: 2.2rem;
-    }
-
-    .contact-text {
-      font-size: 0.95rem;
-      color: var(--muted);
-    }
-
-    .contact-block {
-      border-radius: var(--radius);
-      border: 1px solid rgba(51,65,85,0.9);
-      padding: 1.25rem 1.4rem;
-      background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(12,10,25,0.96));
-      font-size: 0.9rem;
-    }
-
-    .contact-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-      margin-bottom: 0.7rem;
-    }
-
-    .contact-label {
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-size: 0.72rem;
-      color: var(--muted);
-    }
-
-    .contact-value {
-      color: #e5e7eb;
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid rgba(30,64,175,0.6);
-      padding: 1.6rem 1.25rem 2rem;
-      background: radial-gradient(circle at bottom, #020617, #020617);
-    }
-
-    .footer-inner {
-      max-width: 1080px;
-      margin: 0 auto;
-      font-size: 0.78rem;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-    }
-
-    .footer-disclaimer {
-      font-style: italic;
-    }
-
-    .footer-bottom {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-    }
-
-    @media (max-width: 880px) {
-      .hero-inner,
-      .about-grid,
-      .ref-item,
-      .contact-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .hero {
-        padding-top: 2.5rem;
-      }
-
-      .ref-visual {
-        order: -1;
-      }
-
-      .header-inner {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      nav ul {
-        flex-wrap: wrap;
-      }
-    }
-
-    @media (max-width: 520px) {
-      .hero-card,
-      .ref-item {
-        border-radius: 20px;
-      }
-
-      .brand-logo {
-        width: 44px;
-        height: 44px;
-      }
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RCS Groupe Étude — Bureau d’études structure & BIM</title>
+  <meta name="description" content="RCS Groupe Étude — Réhabilitation, projets neufs, expertise et BIM. Études structure, coordination et modélisation 3D orientées exécution."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Optional: swap to any font you want -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
 
-<header>
-  <div class="container header-inner">
-    <div class="brand">
-      <div class="brand-logo">
-        <!-- Remplace le src ci-dessous par le chemin de ton logo -->
-        <img src="7.jpg" alt="RCS Groupe Étude">
-      </div>
-      <div class="brand-text">
-        <strong>RCS GROUPE ÉTUDE</strong>
-        <span>Bureau d'études & ingénierie</span>
-      </div>
-    </div>
-    <nav>
-      <ul>
-        <li><a href="#accueil">Accueil</a></li>
-        <li><a href="#apropos">À propos</a></li>
-        <li><a href="#references">Références</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </div>
-</header>
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="RCS Groupe Étude">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <span class="brand-name">RCS Groupe Étude</span>
+          <span class="brand-tag">Structure • BIM • Exécution</span>
+        </span>
+      </a>
 
-<main>
-
-  <!-- HERO / ACCUEIL -->
-  <section id="accueil" class="hero">
-    <div class="hero-inner">
-      <div>
-        <div class="hero-subtitle">Bureau d'études indépendant</div>
-        <h1 class="hero-title">RCS Groupe Étude</h1>
-        <p class="hero-text">
-          RCS Groupe Étude accompagne maîtres d’ouvrage, entreprises et architectes
-          dans la conception et la réhabilitation de bâtiments techniques et tertiaires.
-          Calculs de structures, études d’exécution, modélisations &amp; renforcement :
-          une approche rigoureuse au service de projets exigeants.
-        </p>
-        <div class="hero-badge">
-          <span class="hero-badge-dot"></span>
-          <span>Expérience validée sur projets stratégiques</span>
+      <nav class="nav" aria-label="Navigation principale">
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navLinks">
+          <span class="nav-toggle-bars" aria-hidden="true"></span>
+          <span class="sr-only">Menu</span>
+        </button>
+        <div class="nav-links" id="navLinks">
+          <a href="#expertises">Expertises</a>
+          <a href="#references">Références</a>
+          <a href="#apropos">À propos</a>
+          <a href="#contact" class="btn btn-small">Demander un devis</a>
         </div>
-      </div>
-      <aside class="hero-card">
-        <div class="hero-card-inner">
-          <div class="hero-card-title">Référence structurante</div>
-          <div class="hero-card-main">
-            <strong>Bâtiment Mario Nikis – Agence Spatiale Européenne (ESA)</strong><br>
-            Réhabilitation lourde – études d’exécution structure.
-          </div>
-          <div class="hero-card-line">
-            Pilotage des calculs, renforcements béton/métal et conformité réglementaire
-            sur un ensemble tertiaire de 12&nbsp;000&nbsp;m² en site occupé.
-          </div>
-          <div class="hero-card-footer">
-            <span>Pourquoi RCS&nbsp;?</span> Parce que votre projet mérite un bureau d’études
-            capable de gérer des opérations complexes, avec transparence et traçabilité
-            de chaque hypothèse de calcul.
-          </div>
-        </div>
-      </aside>
+      </nav>
     </div>
-  </section>
+  </header>
 
-  <!-- À PROPOS -->
-  <section id="apropos">
-    <div class="section-inner">
-      <h2 class="section-title">À propos</h2>
-      <div class="section-subtitle">Un bureau d'études engagé sur le résultat</div>
+  <main id="contenu">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <img src="assets/hero-1.jpg" alt="" loading="eager"/>
+      </div>
 
-      <div class="about-grid">
-        <div class="about-text">
-          <p>
-            RCS Groupe Étude intervient en amont (conception) et en phase d’exécution
-            pour sécuriser les choix structurels, optimiser les coûts et limiter les aléas chantier.
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Bureau d’études</p>
+          <h1>Structure & BIM orientés exécution<br><span class="muted">pour réhabilitations et projets neufs</span></h1>
+          <p class="lead">
+            Nous sécurisons vos projets grâce à une approche structurée : études de faisabilité, calculs,
+            coordination et livrables BIM exploitables en phase chantier.
           </p>
-          <ul class="about-list">
-            <li>Études de structures béton &amp; métal (neuf &amp; réhabilitation)</li>
-            <li>Notes de calcul, plans d'exécution, détails de renforcement</li>
-            <li>Modélisations numériques &amp; vérifications réglementaires</li>
-            <li>Accompagnement des équipes travaux et MOE sur site</li>
-          </ul>
+
+          <div class="hero-cta">
+            <a class="btn" href="#references">Découvrir nos références</a>
+            <a class="btn btn-ghost" href="#contact">Contact</a>
+          </div>
+
+          <div class="hero-badges" role="list" aria-label="Points forts">
+            <div class="badge" role="listitem">🏛 Réhabilitation & restructuration</div>
+            <div class="badge" role="listitem">🏗 Conception & calculs structurels</div>
+            <div class="badge" role="listitem">💻 BIM exécution & coordination</div>
+          </div>
         </div>
-        <aside class="about-card">
-          <p>
-            <strong>Approche RCS :</strong><br>
-            partir de l’existant, clarifier les contraintes (techniques, planning,
-            sécurité, budget) et proposer des solutions structurelles argumentées,
-            directement exploitables par les équipes de chantier.
-          </p>
-        </aside>
+
+        <div class="hero-card">
+          <div class="hero-card-top">
+            <p class="hero-card-title">Référence phare</p>
+            <p class="hero-card-sub">Bâtiment Mario Nikis — ESA (Paris)</p>
+          </div>
+          <div class="hero-card-media">
+            <img src="assets/project-esa.jpg" alt="Aperçu projet ESA – Bâtiment Mario Nikis" loading="lazy"/>
+          </div>
+          <div class="hero-card-bottom">
+            <div class="chip">2018–2019</div>
+            <a class="link" target="_blank" rel="noopener" href="https://www.pcm-ingenierie.fr/realisations/rehabilitation_lourde_mario_nikis/">
+              Voir la référence publique
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- RÉFÉRENCES / PORTFOLIO -->
-  <section id="references">
-    <div class="section-inner">
-      <h2 class="section-title">Références</h2>
-      <div class="section-subtitle">Sélection de projets &amp; réalisations</div>
+    <!-- EXPERTISES -->
+    <section class="section" id="expertises">
+      <div class="container">
+        <div class="section-head">
+          <h2>Nos expertises</h2>
+          <p class="section-sub">
+            Votre activité se divise en 4 pôles stratégiques — de l’audit à la production BIM.
+          </p>
+        </div>
 
-      <div class="refs-grid">
+        <div class="grid grid-4">
+          <article class="card">
+            <div class="card-icon">🏛</div>
+            <h3>Réhabilitation & Rénovation</h3>
+            <p>Restructuration lourde, mise aux normes, valorisation patrimoniale.</p>
+            <ul>
+              <li>Réhabilitation lourde</li>
+              <li>Rénovation énergétique & architecturale</li>
+              <li>Restructuration technique et fonctionnelle</li>
+            </ul>
+          </article>
 
-        <!-- RÉFÉRENCE PHARE : MARIO NIKIS -->
-        <article class="ref-item">
-          <div>
-            <header class="ref-header">
-              <div class="ref-title">Bâtiment Mario Nikis – Agence Spatiale Européenne (ESA)</div>
-              <div class="ref-meta">Réhabilitation lourde &nbsp;|&nbsp; Paris 15ᵉ</div>
-            </header>
+          <article class="card">
+            <div class="card-icon">🏗</div>
+            <h3>Projets Neufs</h3>
+            <p>Conception technique, calculs structurels, coordination et suivi.</p>
+            <ul>
+              <li>Conception architecturale et technique</li>
+              <li>Calculs structurels</li>
+              <li>Coordination des corps d’état</li>
+            </ul>
+          </article>
 
-            <div class="ref-body">
-              <p><strong>Projet :</strong> Réhabilitation lourde du Bâtiment Mario Nikis (Siège de l’ESA, Paris).</p>
-              <p><strong>Période :</strong> 2018–2019 &nbsp;|&nbsp;
-                <strong>Rôle :</strong> Ingénieur études structure au sein de GECIBA Structures (filiale PCM).
-              </p>
+          <article class="card">
+            <div class="card-icon">📊</div>
+            <h3>Expertise & Méthodologie</h3>
+            <p>Décider vite et juste : audits, faisabilité, accompagnement.</p>
+            <ul>
+              <li>Études de faisabilité</li>
+              <li>Audits techniques & réglementaires</li>
+              <li>Formation & accompagnement</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">💻</div>
+            <h3>BIM & Modélisation 3D</h3>
+            <p>Livrables BIM orientés exécution, coordination numérique.</p>
+            <ul>
+              <li>Plans d’exécution en BIM</li>
+              <li>Gabarits & familles paramétriques</li>
+              <li>Paramètres partagés & coordination</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- REFERENCES -->
+    <section class="section section-alt" id="references">
+      <div class="container">
+        <div class="section-head">
+          <h2>Références</h2>
+          <p class="section-sub">5 projets sélectionnés. Chaque fiche : rôle, résultat, lien public quand disponible.</p>
+        </div>
+
+        <div class="grid grid-2">
+          <!-- ESA -->
+          <article class="project card card-project">
+            <div class="project-media">
+              <img src="assets/project-esa.jpg" alt="Projet ESA — Bâtiment Mario Nikis" loading="lazy"/>
+            </div>
+            <div class="project-body">
+              <h3>Réhabilitation lourde — Bâtiment Mario Nikis (ESA, Paris)</h3>
+              <p class="meta"><span class="chip">2018–2019</span> <span class="meta-sep">•</span> <strong>Rôle :</strong> Ingénieur études structure (GECIBA Structures — filiale PCM)</p>
               <p>
-                <strong>Description :</strong> Études d'exécution pour les renforcements structurels,
-                modélisations et conformité réglementaire sur environ 12&nbsp;000&nbsp;m² :
-                démolitions lourdes, renforts béton/métal, protections spécifiques et adaptation du bâtiment
-                aux exigences sécuritaires d’un site stratégique occupé.
+                Études d'exécution pour renforcements structurels, modélisations et conformité sur 12 000 m²
+                (démolitions, protections anti-attentat, rénovation complète).
               </p>
-
-              <div class="ref-result">
-                <strong>Résultat :</strong> Livraison réussie d'un bâtiment tertiaire sécurisé pour
-                l’Agence Spatiale Européenne, avec optimisation des solutions structurelles
-                et maîtrise du phasage de renforcement.
-              </div>
-
-              <p class="ref-link">
-                <strong>Référence publique :</strong>
-                <a href="https://www.pcm-ingenierie.fr/realisations/rehabilitation_lourde_mario_nikis/" target="_blank" rel="noopener">
-                  Voir la réalisation sur le site de PCM Ingénierie
+              <p class="result">
+                <strong>Résultat :</strong> Livraison réussie d’un bâtiment tertiaire sécurisé pour l’Agence Spatiale Européenne.
+              </p>
+              <p class="small muted">Crédit visuel : © PCM / ESA</p>
+              <div class="project-actions">
+                <a class="btn btn-small" target="_blank" rel="noopener" href="https://www.pcm-ingenierie.fr/realisations/rehabilitation_lourde_mario_nikis/">
+                  Référence publique
                 </a>
-                <span aria-hidden="true">↗</span>
-              </p>
-
-              <div class="ref-badge">
-                <span>Référence phare – expérience validée (CDD 2018)</span>
+                <button class="btn btn-small btn-ghost" data-modal="esa">Voir détails</button>
               </div>
+            </div>
+          </article>
 
-              <p style="margin-top: 0.8rem; font-size: 0.86rem; color: var(--muted);">
-                <strong>Enjeux :</strong> restructuration lourde en site occupé, contraintes
-                sismiques et sécuritaires renforcées, maintien des activités de l’ESA.<br>
-                <strong>Impact :</strong> solutions de renforcement fiables, lisibles et compatibles
-                avec les impératifs de planning et de coût d’un projet tertiaire de grande envergure.
+          <!-- Morland -->
+          <article class="project card card-project">
+            <div class="project-media">
+              <img src="assets/project-morland.jpg" alt="Projet Morland" loading="lazy"/>
+            </div>
+            <div class="project-body">
+              <h3>Morland</h3>
+              <p class="meta"><span class="chip">Période : à compléter</span> <span class="meta-sep">•</span> <strong>Rôle :</strong> à compléter</p>
+              <p>
+                Études structure et coordination technique, production de livrables d’exécution et contrôle de cohérence
+                entre maquettes et plans.
               </p>
+              <p class="result"><strong>Résultat :</strong> Optimisation des interfaces et fiabilisation des livrables pour la phase exécution.</p>
+              <div class="project-actions">
+                <button class="btn btn-small btn-ghost" data-modal="morland">Voir détails</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- SWAYS -->
+          <article class="project card card-project">
+            <div class="project-media">
+              <img src="assets/project-sways.jpg" alt="Projet SWAYS" loading="lazy"/>
+            </div>
+            <div class="project-body">
+              <h3>SWAYS</h3>
+              <p class="meta"><span class="chip">Période : à compléter</span> <span class="meta-sep">•</span> <strong>Rôle :</strong> à compléter</p>
+              <p>
+                Modélisation / coordination BIM, vérification des interférences et préparation des livrables (plans + quantités)
+                selon les besoins chantier.
+              </p>
+              <p class="result"><strong>Résultat :</strong> Réduction des reprises et amélioration de la coordination multi-lots.</p>
+              <div class="project-actions">
+                <button class="btn btn-small btn-ghost" data-modal="sways">Voir détails</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- ILP -->
+          <article class="project card card-project">
+            <div class="project-media">
+              <img src="assets/project-ilp.jpg" alt="Projet ILP — Îlot Perret" loading="lazy"/>
+            </div>
+            <div class="project-body">
+              <h3>ILP — Îlot Perret</h3>
+              <p class="meta"><span class="chip">Période : à compléter</span> <span class="meta-sep">•</span> <strong>Rôle :</strong> à compléter</p>
+              <p>
+                Études structure et appui méthode : standards de maquette, gabarits, paramètres partagés, contrôle qualité
+                des livrables.
+              </p>
+              <p class="result"><strong>Résultat :</strong> Process BIM plus robuste et livrables homogènes pour les équipes projet.</p>
+              <div class="project-actions">
+                <button class="btn btn-small btn-ghost" data-modal="ilp">Voir détails</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- V25 -->
+          <article class="project card card-project">
+            <div class="project-media">
+              <img src="assets/project-v25.jpg" alt="Projet Ateliers V25" loading="lazy"/>
+            </div>
+            <div class="project-body">
+              <h3>Ateliers V25</h3>
+              <p class="meta"><span class="chip">Période : à compléter</span> <span class="meta-sep">•</span> <strong>Rôle :</strong> à compléter</p>
+              <p>
+                Études techniques et production BIM orientée exécution : plans, détails, cohérence structure/architecture,
+                préparation coordination.
+              </p>
+              <p class="result"><strong>Résultat :</strong> Livrables prêts chantier et meilleure maîtrise délais/coûts.</p>
+              <div class="project-actions">
+                <button class="btn btn-small btn-ghost" data-modal="v25">Voir détails</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- A PROPOS -->
+    <section class="section" id="apropos">
+      <div class="container">
+        <div class="split">
+          <div>
+            <h2>À propos</h2>
+            <p class="lead">
+              RCS Groupe Étude accompagne maîtres d’ouvrage, architectes et entreprises sur des missions
+              structure et BIM, avec une priorité : des livrables fiables, coordonnés et exploitables.
+            </p>
+
+            <div class="kpi">
+              <div class="kpi-item">
+                <div class="kpi-val">BIM</div>
+                <div class="kpi-lab">orienté exécution</div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-val">QC</div>
+                <div class="kpi-lab">contrôle & cohérence</div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-val">Rex</div>
+                <div class="kpi-lab">projets complexes</div>
+              </div>
             </div>
           </div>
 
-          <aside class="ref-visual">
-            <div class="ref-visual-img"></div>
-            <div class="ref-visual-caption">
-              Visuel projet Mario Nikis / ESA<br>
-              <span>© PCM / ESA – image issue de publication publique</span>
-            </div>
-          </aside>
-        </article>
-
-        <!-- Tu pourras dupliquer ce bloc <article> pour ajouter d'autres références -->
+          <div class="about-media">
+            <img src="assets/hero-2.jpg" alt="Ambiance chantier / structure (illustration)" loading="lazy"/>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="section-inner">
-      <h2 class="section-title">Contact</h2>
-      <div class="section-subtitle">Parlons de votre projet</div>
-
-      <div class="contact-grid">
-        <div class="contact-text">
-          <p>
-            Vous préparez une opération de réhabilitation, un projet neuf avec enjeux
-            structurels forts ou un besoin ponctuel d’appui en études d’exécution ?
-          </p>
-          <p style="margin-top: 0.7rem;">
-            RCS Groupe Étude peut intervenir en appui de vos équipes (MOE, MOA, entreprises)
-            pour fiabiliser les choix techniques et documenter les hypothèses de calcul.
-          </p>
+    <!-- CONTACT -->
+    <section class="section section-alt" id="contact">
+      <div class="container">
+        <div class="section-head">
+          <h2>Contact</h2>
+          <p class="section-sub">Décrivez votre besoin. Réponse sous 24–48h ouvrées.</p>
         </div>
 
-        <aside class="contact-block">
-          <div class="contact-row">
-            <div class="contact-label">E-mail</div>
-            <div class="contact-value">
-              <!-- Mets ici ton mail -->
-              <a href="mailto:contact@rcs-groupe-etude.fr">contact@rcs-groupe-etude.fr</a>
+        <div class="contact-grid">
+          <form class="card form" id="contactForm">
+            <div class="form-row">
+              <label>Nom
+                <input required name="name" autocomplete="name" placeholder="Votre nom" />
+              </label>
+              <label>Email
+                <input required type="email" name="email" autocomplete="email" placeholder="vous@exemple.com" />
+              </label>
             </div>
-          </div>
-          <div class="contact-row">
-            <div class="contact-label">Téléphone</div>
-            <div class="contact-value">
-              <!-- Mets ici ton numéro -->
-              +33 (0)6 00 00 00 00
+
+            <div class="form-row">
+              <label>Téléphone
+                <input name="phone" autocomplete="tel" placeholder="+33 …" />
+              </label>
+              <label>Objet
+                <input name="subject" placeholder="Étude structure / BIM / audit…" />
+              </label>
             </div>
-          </div>
-          <div class="contact-row">
-            <div class="contact-label">Localisation</div>
-            <div class="contact-value">
-              Paris &amp; Île-de-France – interventions possibles sur toute la France selon projet.
+
+            <label>Message
+              <textarea required name="message" rows="6" placeholder="Contexte, surface, phase, délais…"></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button class="btn" type="submit">Envoyer</button>
+              <p class="small muted">Ce formulaire ouvre votre client mail (aucune donnée n’est stockée).</p>
             </div>
-          </div>
-        </aside>
+          </form>
+
+          <aside class="card contact-aside">
+            <h3>Coordonnées</h3>
+            <p class="muted">Ajoute ici ton téléphone, email pro, ville, etc.</p>
+            <ul class="contact-list">
+              <li><span class="dot"></span> Email : <a href="mailto:contact@rcs-groupe-etude.fr">contact@rcs-groupe-etude.fr</a></li>
+              <li><span class="dot"></span> Téléphone : <a href="tel:+33000000000">+33 0 00 00 00 00</a></li>
+              <li><span class="dot"></span> Localisation : Paris / Île-de-France</li>
+            </ul>
+
+            <div class="divider"></div>
+
+            <p class="small">
+              <strong>Disclaimer :</strong><br>
+              Toutes références basées sur publications publiques et expériences validées.
+            </p>
+          </aside>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-</main>
-
-<footer>
-  <div class="footer-inner">
-    <div class="footer-disclaimer">
-      Toutes références sont basées sur des publications publiques et des expériences validées
-      au sein des structures concernées. Les marques et logos cités restent la propriété de leurs titulaires.
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p>© <span id="year"></span> RCS Groupe Étude. Tous droits réservés.</p>
+      <a class="link" href="#top">Retour en haut ↑</a>
     </div>
-    <div class="footer-bottom">
-      <div>© <span id="year"></span> RCS Groupe Étude. Tous droits réservés.</div>
-      <div>Site vitrine – contenu à titre informatif.</div>
+  </footer>
+
+  <!-- MODALS (simple, optionnel) -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Détails projet">
+    <div class="modal-overlay" data-close></div>
+    <div class="modal-panel" role="document">
+      <button class="modal-close" type="button" data-close aria-label="Fermer">✕</button>
+      <div class="modal-content" id="modalContent"></div>
     </div>
   </div>
-</footer>
 
-<script>
-  // année auto dans le footer
-  document.getElementById('year').textContent = new Date().getFullYear();
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
